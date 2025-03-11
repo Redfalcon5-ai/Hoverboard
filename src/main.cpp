@@ -7,6 +7,7 @@
 #define PIN_BRAKE_OUT 14
 
 bool ReadFromSerial();
+bool isNumeric(const String& str);
 
 int pwmVal = 0;     
 bool dirVal = 0;         
@@ -41,62 +42,75 @@ void loop()
 
 }
 
-bool ReadFromSerial()
-{    
+
+
+bool ReadFromSerial() {
   if (Serial.available() > 0) {
     // Read the incoming string until a newline character is received
     String input = Serial.readStringUntil('\n');
     input.trim(); // Remove any leading/trailing whitespace
 
-    // Check if the string starts with "PWM,"
-    if (input.startsWith("PWM,")) {
-      _command = "PWM";
-      // Find the comma position
-      int commaIndex = input.indexOf(',');
-      if (commaIndex != -1) {
-        // Extract the substring that contains the numeric value
-        String valueString = input.substring(commaIndex + 1);
-        pwmVal = valueString.toInt();  // Convert string to integer
+    // Check if the string is numeric
+    if (!isNumeric(input)) {
+      Serial.println("Invalid number");
+      return false;
+    }
+    
+    // Convert the input string directly to an integer (speed)
+    int speed = input.toInt();
 
-        // Constrain the PWM value between 0 and 255
-        pwmVal = constrain(pwmVal, 0, 255);
-        brakeVal = 0;
+    // Constrain the speed to the range -100 to 100
+    speed = constrain(speed, -100, 100);
 
-        Serial.println("Setting PWM");
-
-        return true;
-      }
-      else return false;
-    } 
-    else if(input.startsWith("BRAKE")){
-      _command = "BRAKE";
+    if (speed == 0) {
+      // Zero speed means braking
       brakeVal = 1;
       pwmVal = 0;
-
+      _command = "BRAKE";
       Serial.println("Braking");
+    } else {
+      brakeVal = 0;
+      _command = "SPEED";
 
-      return true;
-    }
-    else if(input.startsWith("DIR,")){
-      _command = "DIR";
-
-      int commaIndex = input.indexOf(',');
-      if (commaIndex != -1) {
-        // Extract the substring that contains the numeric value
-        String valueString = input.substring(commaIndex + 1);
-        dirVal = valueString.toInt();  // Convert string to integer
-
-        Serial.println("Setting Direction");
-
-        return true;
+      // Determine direction: positive for forward, negative for reverse
+      if (speed > 0) {
+        dirVal = 0;  // Forward
+      } else {
+        dirVal = 1; // Reverse
+        speed = -speed;  // Use absolute value for PWM mapping
       }
-      else return false;
+      
+      // Map the absolute speed (0-100) to a PWM value (0-255)
+      pwmVal = map(speed, 0, 100, 0, 255);
+      Serial.print("Setting speed: ");
+      Serial.println(speed);
     }
-    else {
-      // If the received string does not match the expected command, print an error message.
-      Serial.println("Invalid command");
+    
+    return true;
+  }
+  return false;
+}
+
+
+
+bool isNumeric(const String& str) {
+  String s = str;
+  s.trim();  // Remove leading and trailing whitespace
+  if (s.length() == 0) return false;  // Empty string isn't a valid number
+  
+  int start = 0;
+  // Allow a leading minus sign for negative numbers
+  if (s.charAt(0) == '-') {
+    if (s.length() == 1) return false; // Only '-' is not a valid number
+    start = 1;
+  }
+  
+  // Check each character to ensure it's a digit
+  for (int i = start; i < s.length(); i++) {
+    if (!isDigit(s.charAt(i))) {
       return false;
     }
   }
-  return false;
+  
+  return true;
 }
