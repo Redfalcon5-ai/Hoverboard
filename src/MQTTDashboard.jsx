@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from "react";
 import mqtt from "mqtt";
+import "./MQTTDashboard.css";
 
 const MQTTDashboard = () => {
   const [pwm1, setPwm1] = useState(0);
   const [pwm2, setPwm2] = useState(0);
   const [client, setClient] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [inputPassword, setInputPassword] = useState("");
+  const [attempted, setAttempted] = useState(false);
+
+
+  const correctPassword = "nigger"; 
 
   useEffect(() => {
+    if (!authenticated) return;
+
     const options = {
       clean: true,
       connectTimeout: 4000,
@@ -15,9 +24,7 @@ const MQTTDashboard = () => {
       username: "hivemq.webclient.1743373482038",
       password: "3a2;j1GK,ploYEL8i#&J",
       protocol: "wss",
-      
     };
-
 
     const mqttClient = mqtt.connect(
       "wss://9f1c22f41e404f04b884c3123ae4200e.s1.eu.hivemq.cloud:8884/mqtt",
@@ -37,7 +44,7 @@ const MQTTDashboard = () => {
     setClient(mqttClient);
 
     return () => mqttClient.end();
-  }, []);
+  }, [authenticated]);
 
   const sendPWM = () => {
     if (client && isConnected) {
@@ -57,15 +64,59 @@ const MQTTDashboard = () => {
     }
   };
 
-  return (
-    <div style={styles.background}>
-      <div style={styles.card}>
-        <h1 style={styles.title}> bot</h1>
+  if (!authenticated) {
+    return (
+      <div className="dashboard-background">
+        <div className="dashboard-card">
+          <h2 className="dashboard-title">🔒 Access Locked</h2>
+          {/* <p className="auth-subtext">Enter password to continue</p> */}
+  
+          <div className="auth-input-group">
+            <input
+              type="password"
+              value={inputPassword}
+              onChange={(e) => {
+                setInputPassword(e.target.value);
+                setAttempted(false); // Clear error while typing
+              }}
+              placeholder="Enter password"
+              className="password-input"
+            />
+            {attempted && inputPassword !== correctPassword && (
+              <p className="auth-error">Incorrect password. Please try again.</p>
+            )}
+          </div>
+  
+          <button
+            className="unlock-button"
+            onClick={() => {
+              setAttempted(true);
+              if (inputPassword === correctPassword) {
+                setAuthenticated(true);
+              }
+            }}
+          >
+            Unlock
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  
+  
 
-        <div style={styles.controlGroup}>
-          <label style={styles.label}>PWM Channel 1: <span style={styles.value}>{pwm1}</span></label>
+  return (
+    <div className="dashboard-background">
+      <div className="dashboard-card">
+        <h1 className="dashboard-title">bot</h1>
+
+        <div className="control-group">
+          <label className="label">
+            PWM Channel 1: <span className="label-value">{pwm1}</span>
+          </label>
           <input
-            style={styles.slider}
+            className="slider"
             type="range"
             min="-30"
             max="30"
@@ -74,10 +125,12 @@ const MQTTDashboard = () => {
           />
         </div>
 
-        <div style={styles.controlGroup}>
-          <label style={styles.label}>PWM Channel 2: <span style={styles.value}>{pwm2}</span></label>
+        <div className="control-group">
+          <label className="label">
+            PWM Channel 2: <span className="label-value">{pwm2}</span>
+          </label>
           <input
-            style={styles.slider}
+            className="slider"
             type="range"
             min="-30"
             max="30"
@@ -86,11 +139,12 @@ const MQTTDashboard = () => {
           />
         </div>
 
-        <div style={styles.buttonGroup}>
+        <div className="button-group">
           <button
             onClick={sendPWM}
             disabled={!isConnected}
-            style={{ ...styles.button, opacity: isConnected ? 1 : 0.5 }}
+            className="button"
+            style={{ opacity: isConnected ? 1 : 0.5 }}
           >
             Send PWM
           </button>
@@ -98,13 +152,14 @@ const MQTTDashboard = () => {
           <button
             onClick={stopAll}
             disabled={!isConnected}
-            style={{ ...styles.stopButton, opacity: isConnected ? 1 : 0.5 }}
+            className="stop-button"
+            style={{ opacity: isConnected ? 1 : 0.5 }}
           >
             🛑 STOP
           </button>
         </div>
 
-        <p style={styles.status}>
+        <p className="status">
           Status:{" "}
           <span style={{ color: isConnected ? "#00FFAA" : "#FFA500" }}>
             {isConnected ? "Connected" : "Connecting..."}
@@ -113,86 +168,6 @@ const MQTTDashboard = () => {
       </div>
     </div>
   );
-};
-
-const styles = {
-  background: {
-    height: "100vh",
-    background: "radial-gradient(circle at 20% 30%, #0b1a2b, #060d13)",
-    color: "#FFFFFF",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontFamily: "'Orbitron', sans-serif",
-    padding: "1rem",
-  },
-  card: {
-    background: "rgba(255, 255, 255, 0.05)",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
-    borderRadius: "20px",
-    padding: "2rem",
-    width: "100%",
-    maxWidth: "500px",
-    backdropFilter: "blur(12px)",
-    boxShadow: "0 0 20px rgba(0, 255, 255, 0.2)",
-  },
-  title: {
-    textAlign: "center",
-    fontSize: "1.8rem",
-    marginBottom: "1.5rem",
-    color: "#00BFFF",
-  },
-  controlGroup: {
-    marginBottom: "1.5rem",
-  },
-  label: {
-    display: "block",
-    fontWeight: "bold",
-    marginBottom: "0.5rem",
-  },
-  value: {
-    fontWeight: "normal",
-    color: "#00FFAA",
-  },
-  slider: {
-    width: "100%",
-    accentColor: "#00FFAA",
-  },
-  buttonGroup: {
-    display: "flex",
-    justifyContent: "space-between",
-    gap: "1rem",
-    marginTop: "1rem",
-  },
-  button: {
-    flex: 1,
-    backgroundColor: "#0066ff",
-    color: "white",
-    border: "none",
-    padding: "0.75rem 1rem",
-    fontSize: "1rem",
-    borderRadius: "10px",
-    cursor: "pointer",
-    fontWeight: "bold",
-    transition: "background-color 0.3s ease",
-  },
-  stopButton: {
-    flex: 1,
-    backgroundColor: "#ff3b3b",
-    color: "white",
-    border: "none",
-    padding: "0.75rem 1rem",
-    fontSize: "1rem",
-    borderRadius: "10px",
-    cursor: "pointer",
-    fontWeight: "bold",
-    transition: "background-color 0.3s ease",
-  },
-  status: {
-    marginTop: "1.5rem",
-    textAlign: "center",
-    fontSize: "1rem",
-  },
 };
 
 export default MQTTDashboard;
