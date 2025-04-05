@@ -1,11 +1,35 @@
-/* MQTTDashboard.css */
-
-body {
-    margin: 0;
-    overflow: hidden;
-    font-family: 'Orbitron', sans-serif;
+/* Background */
+.dashboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to bottom, #10182b, #090e1a);
   }
   
+  /* Main Card */
+  .dashboard-card {
+    width: 90%;
+    max-width: 900px;
+    background: rgba(18, 24, 42, 0.9);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0px 10px 30px rgba(0, 255, 170, 0.15);
+    text-align: center;
+    color: #ffffff;
+  }
+
+  .dashboard-card-unlock {
+    width: 90%;
+    max-width: 700px;
+    background: rgba(18, 24, 42, 0.9);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0px 10px 30px rgba(0, 255, 170, 0.15);
+    text-align: center;
+    color: #ffffff;
+  }
+
   .dashboard-background {
     height: 100vh;
     background: radial-gradient(circle at 20% 30%, #0b1a2b, #060d13);
@@ -16,83 +40,103 @@ body {
     padding: 1rem;
   }
   
-  .dashboard-card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 2rem;
-    width: 100%;
-    max-width: 500px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
-  }
   
+  /* Title */
   .dashboard-title {
-    text-align: center;
     font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    color: #00BFFF;
+    color: #00ffaa;
+    margin-bottom: 1rem;
   }
   
-  .control-group {
-    margin-bottom: 1.5rem;
-  }
-  
-  .label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-  
-  .label-value {
-    font-weight: normal;
-    color: #00FFAA;
-  }
-  
-  .slider {
-    width: 100%;
-    accent-color: #00FFAA;
-  }
-  
-  .button-group {
+  /* Status Boxes */
+  .status-container {
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1rem;
+    justify-content: space-around;
+    margin: 1.5rem 0;
   }
   
-  .button {
-    flex: 1;
-    background-color: #0066ff;
-    color: white;
-    border: none;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-  
-  .stop-button {
-    flex: 1;
-    background-color: #ff3b3b;
-    color: white;
-    border: none;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-  
-  .status {
-    margin-top: 1.5rem;
+  .status-box {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 15px;
+    width: 40%;
     text-align: center;
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+  }
+  
+  .status-title {
     font-size: 1rem;
+    color: #aaa;
+    margin-bottom: 5px;
+  }
+  
+  .status-value {
+    font-size: 1.5rem;
+    color: #ffffff;
+  }
+  
+  /* Sliders */
+  .status-slider {
+    width: 100%;
+    margin-top: 10px;
+    accent-color: #00ffaa;
+  }
+  
+  /* Buttons */
+  .action-buttons {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .button-primary,
+  .button-danger {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .button-primary {
+    background: #00ffaa;
+    color: #000;
+  }
+  
+  .button-primary:hover {
+    background: #00e699;
+  }
+  
+  .button-danger {
+    background: #ff5555;
+    color: #fff;
+  }
+  
+  .button-danger:hover {
+    background: #ff3333;
+  }
+  
+  /* Connection Status */
+  .connection-status {
+    margin-top: 1.5rem;
+  }
+  
+  .status-online {
+    color: #00ffaa;
+  }
+  
+  .status-offline {
+    color: #ff9900;
   }
 
+  .auth-subtext {
+    color: #ccc;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
   .auth-subtext {
     color: #ccc;
     margin-bottom: 1rem;
@@ -133,7 +177,7 @@ body {
   }
   
   .unlock-button {
-    width: 100%;
+    width: 80%;
     padding: 10px 14px;
     font-size: 1rem;
     border: none;
@@ -149,8 +193,3 @@ body {
   .unlock-button:hover {
     background-color: #00e699;
   }
-  
-  
-  
-
-  

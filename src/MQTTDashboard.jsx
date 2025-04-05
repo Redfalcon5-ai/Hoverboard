@@ -11,8 +11,7 @@ const MQTTDashboard = () => {
   const [inputPassword, setInputPassword] = useState("");
   const [attempted, setAttempted] = useState(false);
 
-
-  const correctPassword = "nigger"; 
+  const correctPassword = "nigger";
 
   useEffect(() => {
     if (!authenticated) return;
@@ -67,7 +66,7 @@ const MQTTDashboard = () => {
   if (!authenticated) {
     return (
       <div className="dashboard-background">
-        <div className="dashboard-card">
+        <div className="dashboard-card-unlock">
           <h2 className="dashboard-title">🔒 Access Locked</h2>
           {/* <p className="auth-subtext">Enter password to continue</p> */}
   
@@ -102,69 +101,69 @@ const MQTTDashboard = () => {
       </div>
     );
   }
-  
-  
-  
 
   return (
-    <div className="dashboard-background">
+    <div className="dashboard-container">
       <div className="dashboard-card">
-        <h1 className="dashboard-title">bot</h1>
+        <h1 className="dashboard-title">HOVERBOARD OVERVIEW</h1>
 
-        <div className="control-group">
-          <label className="label">
-            PWM Channel 1: <span className="label-value">{pwm1}</span>
-          </label>
-          <input
-            className="slider"
-            type="range"
-            min="-30"
-            max="30"
-            value={pwm1}
-            onChange={(e) => setPwm1(Number(e.target.value))}
-          />
+        <div className="status-container">
+          <div className="status-box">
+            <p className="status-title">Forward</p>
+            <p className="status-value">{pwm1}</p>
+            <input
+              type="range"
+              min="-30"
+              max="30"
+              value={pwm1}
+              onChange={(e) => setPwm1(Number(e.target.value))}
+              className="status-slider"
+            />
+          </div>
+
+          <div className="status-box">
+            <p className="status-title">Turning</p>
+            <p className="status-value">{pwm2}</p>
+            <input
+              type="range"
+              min="-30"
+              max="30"
+              value={pwm2}
+              onChange={(e) => setPwm2(Number(e.target.value))}
+              className="status-slider"
+            />
+          </div>
         </div>
 
-        <div className="control-group">
-          <label className="label">
-            PWM Channel 2: <span className="label-value">{pwm2}</span>
-          </label>
-          <input
-            className="slider"
-            type="range"
-            min="-30"
-            max="30"
-            value={pwm2}
-            onChange={(e) => setPwm2(Number(e.target.value))}
-          />
-        </div>
-
-        <div className="button-group">
+        <div className="action-buttons">
           <button
             onClick={sendPWM}
             disabled={!isConnected}
-            className="button"
-            style={{ opacity: isConnected ? 1 : 0.5 }}
+            className="button-primary"
           >
             Send PWM
           </button>
 
-          <button
+          
+
+        <div className="connection-status">
+          <p>
+            Status:{" "}
+            <span className={isConnected ? "status-online" : "status-offline"}>
+              {isConnected ? "Connected" : "Connecting..."}
+            </span>
+          </p>
+        </div>
+
+        <button
             onClick={stopAll}
             disabled={!isConnected}
-            className="stop-button"
-            style={{ opacity: isConnected ? 1 : 0.5 }}
+            className="button-danger"
           >
             🛑 STOP
           </button>
         </div>
 
-        <p className="status">
-          Status:{" "}
-          <span style={{ color: isConnected ? "#00FFAA" : "#FFA500" }}>
-            {isConnected ? "Connected" : "Connecting..."}
-          </span>
-        </p>
       </div>
     </div>
   );
